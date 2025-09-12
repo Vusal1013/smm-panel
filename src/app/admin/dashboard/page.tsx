@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
-import { Users, Wallet, ShoppingCart, Package, LogOut, DollarSign } from 'lucide-react'
+import { Users, Wallet, ShoppingCart, Package, LogOut, DollarSign, Folder } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Stats {
   totalUsers: number
+  totalCategories: number
   totalBalance: number
   pendingBalanceRequests: number
   totalOrders: number
@@ -23,6 +24,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
+    totalCategories: 0,
     totalBalance: 0,
     pendingBalanceRequests: 0,
     totalOrders: 0,
@@ -65,6 +67,11 @@ export default function AdminDashboard() {
         .from('users')
         .select('*', { count: 'exact', head: true })
 
+      // Toplam kategori sayısı
+      const { count: totalCategories } = await supabase
+        .from('categories')
+        .select('*', { count: 'exact', head: true })
+
       // Toplam bakiye
       const { data: balanceData } = await supabase
         .from('users')
@@ -95,6 +102,7 @@ export default function AdminDashboard() {
 
       setStats({
         totalUsers: totalUsers || 0,
+        totalCategories: totalCategories || 0,
         totalBalance,
         pendingBalanceRequests: pendingBalanceRequests || 0,
         totalOrders: totalOrders || 0,
@@ -164,6 +172,18 @@ export default function AdminDashboard() {
 
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
+              <div className="bg-yellow-100 p-3 rounded-full mr-4">
+                <Folder className="h-6 w-6 text-yellow-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Toplam Kategori</h3>
+                <p className="text-2xl font-bold text-yellow-600">{stats.totalCategories}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center">
               <div className="bg-green-100 p-3 rounded-full mr-4">
                 <DollarSign className="h-6 w-6 text-green-600" />
               </div>
@@ -224,7 +244,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Link
             href="/admin/balance"
             className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -251,6 +271,21 @@ export default function AdminDashboard() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Sipariş Yönetimi</h3>
                 <p className="text-gray-600">Siparişleri yönet</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/categories"
+            className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center">
+              <div className="bg-yellow-100 p-3 rounded-full mr-4">
+                <Folder className="h-6 w-6 text-yellow-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Kategori Yönetimi</h3>
+                <p className="text-gray-600">Kategorileri yönet</p>
               </div>
             </div>
           </Link>
