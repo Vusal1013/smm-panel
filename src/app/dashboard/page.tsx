@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
-import { Wallet, ShoppingCart, Package, LogOut, Shield } from 'lucide-react'
+import { Wallet, ShoppingCart, Package, LogOut } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function DashboardPage() {

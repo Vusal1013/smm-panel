@@ -18,7 +18,7 @@ interface Stats {
 }
 
 export default function AdminDashboard() {
-  const { user, userProfile, logout } = useAuthStore()
+  const { userProfile, logout } = useAuthStore()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<Stats>({

@@ -23,7 +23,6 @@ interface BalanceRequest {
 }
 
 export default function AdminBalancePage() {
-  const { userProfile } = useAuthStore()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState<BalanceRequest[]>([])

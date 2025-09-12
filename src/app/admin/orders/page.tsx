@@ -28,7 +28,6 @@ interface Order {
 }
 
 export default function AdminOrdersPage() {
-  const { userProfile } = useAuthStore()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [orders, setOrders] = useState<Order[]>([])

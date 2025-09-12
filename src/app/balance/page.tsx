@@ -91,7 +91,7 @@ export default function BalancePage() {
       const form = e.target as HTMLFormElement
       form.reset()
       
-    } catch (error) {
+    } catch {
       toast.error('Bir hata oluştu')
     } finally {
       setSubmitting(false)
@@ -216,7 +216,7 @@ export default function BalancePage() {
                     </label>
                     <p className="pl-1">veya sürükle bırak</p>
                   </div>
-                  <p className="text-xs text-gray-500">PNG, JPG, GIF 10MB'a kadar</p>
+                  <p className="text-xs text-gray-500">PNG, JPG, GIF 10MB&apos;a kadar</p>
                 </div>
               </div>
             </div>

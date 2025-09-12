@@ -77,7 +77,7 @@ export default function LoginPage() {
 
         toast.success('Giriş başarılı!')
       }
-    } catch (error) {
+    } catch {
       toast.error('Bir hata oluştu')
     } finally {
       setLoading(false)
