@@ -287,8 +287,8 @@ function NewOrderContent() {
     </div>
   )
 }
-expo
-rt default function NewOrderPage() {
+
+export default function NewOrderPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
