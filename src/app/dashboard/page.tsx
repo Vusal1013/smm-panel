@@ -186,16 +186,16 @@ export default function DashboardPage() {
           </Link>
 
           <Link
-            href="/orders/new"
+            href="/services"
             className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center">
               <div className="bg-blue-100 p-3 rounded-full mr-4">
-                <ShoppingCart className="h-6 w-6 text-blue-600" />
+                <Package className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Sipariş Ver</h3>
-                <p className="text-gray-600">Yeni sipariş oluşturun</p>
+                <h3 className="text-lg font-semibold text-gray-900">Hizmetler</h3>
+                <p className="text-gray-600">Mevcut hizmetleri görün</p>
               </div>
             </div>
           </Link>

@@ -224,7 +224,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Link
             href="/admin/balance"
             className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -251,6 +251,21 @@ export default function AdminDashboard() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Sipariş Yönetimi</h3>
                 <p className="text-gray-600">Siparişleri yönet</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/services"
+            className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center">
+              <div className="bg-orange-100 p-3 rounded-full mr-4">
+                <Package className="h-6 w-6 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Hizmet Yönetimi</h3>
+                <p className="text-gray-600">Hizmetleri yönet</p>
               </div>
             </div>
           </Link>
