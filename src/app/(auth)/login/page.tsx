@@ -68,20 +68,32 @@ export default function LoginPage() {
           }
         }
 
+        // Admin e-posta kontrolü
+        const isAdminEmail = data.user.email === 'lokysmm@gmail.com'
+        
+        if (isAdminEmail) {
+          console.log('Admin email detected, redirecting to admin dashboard')
+          toast.success('Admin olarak giriş yapıldı!')
+          
+          // Admin profili oluştur/güncelle
+          const adminProfile = {
+            id: data.user.id,
+            email: data.user.email!,
+            full_name: data.user.user_metadata?.full_name || 'Admin',
+            balance: 0,
+            is_admin: true
+          }
+          
+          setUserProfile(adminProfile)
+          router.push('/admin/dashboard')
+          return
+        }
+
         if (profile) {
           console.log('Profile found:', profile)
-          console.log('Is admin:', profile.is_admin)
           setUserProfile(profile)
-          
-          if (profile.is_admin) {
-            console.log('Redirecting to admin dashboard')
-            toast.success('Admin olarak giriş yapıldı!')
-            router.push('/admin/dashboard')
-          } else {
-            console.log('Redirecting to user dashboard')
-            toast.success('Giriş başarılı!')
-            router.push('/dashboard')
-          }
+          toast.success('Giriş başarılı!')
+          router.push('/dashboard')
         } else {
           console.log('No profile found, redirecting to dashboard')
           toast.success('Giriş başarılı!')
