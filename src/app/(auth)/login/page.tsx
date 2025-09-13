@@ -35,41 +35,55 @@ export default function LoginPage() {
       if (data.user) {
         setUser(data.user)
         
-        // Admin e-posta kontrolü - VERİTABANI SORGUSU YOK!
-        const isAdminEmail = data.user.email === 'lokysmm@gmail.com'
-        
-        if (isAdminEmail) {
-          console.log('Admin email detected, redirecting to admin dashboard')
-          
-          // Admin profili oluştur (sadece state için)
-          const adminProfile = {
-            id: data.user.id,
-            email: data.user.email!,
-            full_name: data.user.user_metadata?.full_name || 'Admin',
-            balance: 0,
-            is_admin: true
+        // Veritabanından kullanıcı profilini al
+        const { data: profile, error: profileError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', data.user.id)
+          .single()
+
+        if (profileError) {
+          console.error('Profile error:', profileError)
+          // Profil bulunamazsa oluştur
+          const { data: newProfile, error: insertError } = await supabase
+            .from('users')
+            .insert({
+              id: data.user.id,
+              email: data.user.email!,
+              full_name: data.user.user_metadata?.full_name || '',
+              balance: 0,
+              is_admin: false
+            })
+            .select()
+            .single()
+
+          if (insertError) {
+            console.error('Insert profile error:', insertError)
+            toast.error('Profil oluşturulamadı')
+            return
           }
-          
-          setUserProfile(adminProfile)
-          toast.success('Admin olarak giriş yapıldı!')
-          router.push('/admin/dashboard')
+
+          setUserProfile(newProfile)
+          toast.success('Giriş başarılı!')
+          router.push('/dashboard')
           return
         }
 
-        // Normal kullanıcılar için basit profil
-        const userProfile = {
-          id: data.user.id,
-          email: data.user.email!,
-          full_name: data.user.user_metadata?.full_name || '',
-          balance: 0,
-          is_admin: false
+        if (profile) {
+          setUserProfile(profile)
+          
+          if (profile.is_admin) {
+            toast.success('Admin olarak giriş yapıldı!')
+            router.push('/admin/dashboard')
+            return
+          }
         }
         
-        setUserProfile(userProfile)
         toast.success('Giriş başarılı!')
         router.push('/dashboard')
       }
-    } catch {
+    } catch (error) {
+      console.error('Login error:', error)
       toast.error('Bir hata oluştu')
     } finally {
       setLoading(false)
