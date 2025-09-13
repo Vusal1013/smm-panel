@@ -44,28 +44,7 @@ export default function LoginPage() {
 
         if (profileError) {
           console.error('Profile error:', profileError)
-          // Profil bulunamazsa oluştur
-          const { data: newProfile, error: insertError } = await supabase
-            .from('users')
-            .insert({
-              id: data.user.id,
-              email: data.user.email!,
-              full_name: data.user.user_metadata?.full_name || '',
-              balance: 0,
-              is_admin: false
-            })
-            .select()
-            .single()
-
-          if (insertError) {
-            console.error('Insert profile error:', insertError)
-            toast.error('Profil oluşturulamadı')
-            return
-          }
-
-          setUserProfile(newProfile)
-          toast.success('Giriş başarılı!')
-          router.push('/dashboard')
+          toast.error('Profil bulunamadı. Lütfen önce kayıt olun.')
           return
         }
 
