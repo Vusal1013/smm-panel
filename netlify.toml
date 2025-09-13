@@ -8,4 +8,6 @@
   status = 200
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
+  NEXT_PUBLIC_SUPABASE_URL = "https://jcsgwteumupieyxykufk.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impjc2d3dGV1bXVwaWV5eHlrdWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2ODQ2MzYsImV4cCI6MjA3MzI2MDYzNn0.1V0x_D1hBm_I9gZzu78b7J3a7oCpzSmno9JLylb9DPk"
