@@ -37,7 +37,24 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
-        // Kullanıcı kaydı başarılı - profil login sırasında oluşturulacak
+        // Kullanıcı profilini users tablosuna ekle
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert([
+            {
+              id: data.user.id,
+              email: data.user.email!,
+              full_name: fullName,
+              balance: 0,
+              is_admin: false,
+            }
+          ])
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError)
+          // Profil oluşturulamazsa da kayıt başarılı sayılır, login sırasında tekrar denenecek
+        }
+
         toast.success('Kayıt başarılı! Giriş yapabilirsiniz.')
         router.push('/login')
       }

@@ -62,22 +62,23 @@ export default function AdminDashboard() {
 
   const loadStats = async () => {
     try {
-      // Toplam kullanıcı sayısı
-      const { count: totalUsers } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true })
+      // Service role ile admin işlemleri için
+      const supabaseAdmin = supabase
+
+      // Toplam kullanıcı sayısı - RPC fonksiyonu kullan
+      const { data: userCountData } = await supabaseAdmin.rpc('get_user_count')
+      const totalUsers = userCountData || 0
 
       // Toplam kategori sayısı
-      const { count: totalCategories } = await supabase
+      const { count: totalCategories } = await supabaseAdmin
         .from('categories')
         .select('*', { count: 'exact', head: true })
 
-      // Toplam bakiye
-      const { data: balanceData } = await supabase
-        .from('users')
-        .select('balance')
+      // Toplam bakiye - RPC fonksiyonu kullan
+      const { data: totalBalanceData } = await supabaseAdmin.rpc('get_total_balance')
+      const totalBalance = totalBalanceData || 0
 
-      const totalBalance = balanceData?.reduce((sum, user) => sum + (user.balance || 0), 0) || 0
+
 
       // Bekleyen bakiye talepleri
       const { count: pendingBalanceRequests } = await supabase
