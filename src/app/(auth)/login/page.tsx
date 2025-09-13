@@ -58,18 +58,24 @@ export default function LoginPage() {
         }
 
         if (profile) {
+          console.log('Profile found:', profile)
+          console.log('Is admin:', profile.is_admin)
           setUserProfile(profile)
+          
           if (profile.is_admin) {
+            console.log('Redirecting to admin dashboard')
+            toast.success('Admin olarak giriş yapıldı!')
             router.push('/admin/dashboard')
           } else {
+            console.log('Redirecting to user dashboard')
+            toast.success('Giriş başarılı!')
             router.push('/dashboard')
           }
         } else {
-          // Profil oluşturulamadıysa yine de dashboard'a yönlendir
+          console.log('No profile found, redirecting to dashboard')
+          toast.success('Giriş başarılı!')
           router.push('/dashboard')
         }
-
-        toast.success('Giriş başarılı!')
       }
     } catch {
       toast.error('Bir hata oluştu')
