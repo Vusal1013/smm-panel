@@ -11,6 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
 -- RLS (Row Level Security) politikaları
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
+-- Mevcut policy'leri sil ve yeniden oluştur
+DROP POLICY IF EXISTS "Users can view own profile" ON users;
+DROP POLICY IF EXISTS "Users can update own profile" ON users;
+DROP POLICY IF EXISTS "Users can insert own profile" ON users;
+
 -- Kullanıcılar sadece kendi verilerini görebilir
 CREATE POLICY "Users can view own profile" ON users
   FOR SELECT USING (auth.uid() = id);
@@ -57,6 +62,10 @@ CREATE TABLE IF NOT EXISTS balance_requests (
 -- RLS for balance_requests
 ALTER TABLE balance_requests ENABLE ROW LEVEL SECURITY;
 
+-- Mevcut policy'leri sil ve yeniden oluştur
+DROP POLICY IF EXISTS "Users can view own balance requests" ON balance_requests;
+DROP POLICY IF EXISTS "Users can create balance requests" ON balance_requests;
+
 -- Kullanıcılar kendi bakiye taleplerini görebilir
 CREATE POLICY "Users can view own balance requests" ON balance_requests
   FOR SELECT USING (auth.uid() = user_id);
@@ -80,6 +89,10 @@ CREATE TABLE IF NOT EXISTS orders (
 
 -- RLS for orders
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Mevcut policy'leri sil ve yeniden oluştur
+DROP POLICY IF EXISTS "Users can view own orders" ON orders;
+DROP POLICY IF EXISTS "Users can create orders" ON orders;
 
 -- Kullanıcılar kendi siparişlerini görebilir
 CREATE POLICY "Users can view own orders" ON orders
