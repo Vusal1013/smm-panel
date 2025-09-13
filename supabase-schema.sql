@@ -136,10 +136,10 @@ BEGIN
   NULL;
 END;
 $$ LANGUAGE plpgsql;
--- Y
-eni kullanıcı kaydında otomatik profil oluşturma fonksiyonu
+
+-- Yeni kullanıcı kaydında otomatik profil oluşturma fonksiyonu
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.users (id, email, full_name, balance, is_admin)
   VALUES (
@@ -151,7 +151,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger: Yeni kullanıcı auth.users'a eklendiğinde otomatik profil oluştur
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
