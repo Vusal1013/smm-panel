@@ -36,25 +36,36 @@ export default function LoginPage() {
         setUser(data.user)
         
         // Kullanıcı profilini al
-        let { data: profile } = await supabase
+        let { data: profile, error: profileError } = await supabase
           .from('users')
           .select('*')
           .eq('id', data.user.id)
           .single()
 
-        // Profil yoksa oluştur (trigger otomatik oluşturacak)
-        if (!profile) {
-          // Trigger'ın çalışması için biraz bekle
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          
-          // Tekrar profili al
-          const { data: retryProfile } = await supabase
+        console.log('Profile query result:', { profile, profileError })
+
+        // Profil yoksa oluştur
+        if (!profile && !profileError) {
+          console.log('Creating new profile...')
+          const { data: newProfile, error: createError } = await supabase
             .from('users')
-            .select('*')
-            .eq('id', data.user.id)
+            .insert([
+              {
+                id: data.user.id,
+                email: data.user.email!,
+                full_name: data.user.user_metadata?.full_name || '',
+                balance: 0,
+                is_admin: false,
+              }
+            ])
+            .select()
             .single()
+
+          console.log('Create profile result:', { newProfile, createError })
           
-          profile = retryProfile
+          if (!createError && newProfile) {
+            profile = newProfile
+          }
         }
 
         if (profile) {
