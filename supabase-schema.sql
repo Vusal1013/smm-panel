@@ -141,14 +141,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Admin kullanıcı oluşturma fonksiyonu (isteğe bağlı)
-CREATE OR REPLACE FUNCTION create_admin_user()
+-- Admin kullanıcı oluşturma fonksiyonu
+CREATE OR REPLACE FUNCTION create_admin_user(admin_email TEXT)
 RETURNS VOID AS $$
 BEGIN
-  -- Bu fonksiyon manuel olarak çağrılacak
-  NULL;
+  -- Mevcut kullanıcıyı admin yap
+  UPDATE users 
+  SET is_admin = true 
+  WHERE email = admin_email;
+  
+  -- Eğer kullanıcı bulunamazsa hata ver
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Kullanıcı bulunamadı: %', admin_email;
+  END IF;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Yeni kullanıcı kaydında otomatik profil oluşturma fonksiyonu
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -171,3 +178,85 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+-- Adm
+in politikalarını ekle
+CREATE POLICY "Admins can view all users" ON users
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+CREATE POLICY "Admins can update all users" ON users
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+-- Admin için balance_requests politikaları
+CREATE POLICY "Admins can view all balance requests" ON balance_requests
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+CREATE POLICY "Admins can update balance requests" ON balance_requests
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+-- Admin için orders politikaları
+CREATE POLICY "Admins can view all orders" ON orders
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+CREATE POLICY "Admins can update all orders" ON orders
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+-- Admin istatistikleri için RPC fonksiyonları
+CREATE OR REPLACE FUNCTION get_user_count()
+RETURNS INTEGER AS $$
+BEGIN
+  -- Admin kontrolü
+  IF NOT EXISTS (
+    SELECT 1 FROM users 
+    WHERE id = auth.uid() AND is_admin = true
+  ) THEN
+    RAISE EXCEPTION 'Yetkisiz erişim';
+  END IF;
+  
+  RETURN (SELECT COUNT(*)::INTEGER FROM users);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION get_total_balance()
+RETURNS DECIMAL AS $$
+BEGIN
+  -- Admin kontrolü
+  IF NOT EXISTS (
+    SELECT 1 FROM users 
+    WHERE id = auth.uid() AND is_admin = true
+  ) THEN
+    RAISE EXCEPTION 'Yetkisiz erişim';
+  END IF;
+  
+  RETURN (SELECT COALESCE(SUM(balance), 0) FROM users);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
