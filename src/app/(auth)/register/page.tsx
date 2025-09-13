@@ -20,6 +20,8 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
+      console.log('Registering user:', { email, fullName })
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -37,24 +39,31 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
+        console.log('User created:', data.user.id)
+        
         // Kullanıcı profilini users tablosuna ekle
-        const { error: profileError } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from('users')
-          .insert([
-            {
-              id: data.user.id,
-              email: data.user.email!,
-              full_name: fullName,
-              balance: 0,
-              is_admin: false,
-            }
-          ])
+          .insert({
+            id: data.user.id,
+            email: data.user.email!,
+            full_name: fullName,
+            balance: 0,
+            is_admin: false,
+          })
+          .select()
+          .single()
 
         if (profileError) {
           console.error('Profile creation error:', profileError)
-          // Profil oluşturulamazsa da kayıt başarılı sayılır, login sırasında tekrar denenecek
+          toast.error(`Profil oluşturulamadı: ${profileError.message}`)
+          
+          // Auth kullanıcısını sil
+          await supabase.auth.admin.deleteUser(data.user.id)
+          return
         }
 
+        console.log('Profile created:', profileData)
         toast.success('Kayıt başarılı! Giriş yapabilirsiniz.')
         router.push('/login')
       }
